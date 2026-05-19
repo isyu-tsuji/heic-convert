@@ -23,8 +23,6 @@ const STATUS_LABELS: Record<ConversionJob['status'], string> = {
   failed: '失敗',
 };
 
-const BASE_URL = 'https://heicflip.example';
-
 export default function App() {
   const [pathname, setPathname] = useState<SitePath>(() => resolvePath(window.location.pathname));
 
@@ -523,7 +521,7 @@ function updateMetadata(pathname: SitePath) {
   const article = pathname === '/' ? undefined : getArticlePage(pathname);
   const title = article ? `${article.title} | heic-flip` : 'heic-flip | HEICをJPG・PNG・WebPへブラウザ内で変換';
   const description = article?.description ?? HOME_PAGE.description;
-  const url = new URL(pathname, BASE_URL).href;
+  const url = new URL(pathname, getSiteBaseUrl()).href;
 
   document.title = title;
 
@@ -535,6 +533,20 @@ function updateMetadata(pathname: SitePath) {
   setMetaTag('property', 'twitter:title', title);
   setMetaTag('property', 'twitter:description', description);
   setLinkHref('canonical', url);
+}
+
+function getSiteBaseUrl(): string {
+  const configured = import.meta.env.VITE_SITE_URL;
+
+  if (typeof configured === 'string' && configured.length > 0) {
+    return configured;
+  }
+
+  if (typeof window !== 'undefined') {
+    return window.location.origin;
+  }
+
+  return 'https://heicflip.example';
 }
 
 function setMetaTag(attrName: 'name' | 'property', key: string, value: string) {
