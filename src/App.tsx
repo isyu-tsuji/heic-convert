@@ -254,7 +254,7 @@ function HomePage({ onNavigate }: { onNavigate: (path: SitePath) => void }) {
           <p className="eyebrow">ブラウザで変換</p>
           <h1>heic-flip</h1>
         </div>
-        <p className="app-tagline">HEIC/HEIF を JPG、PNG、WebP に変換します。画像はこの端末のブラウザ内だけで処理します。</p>
+        <p className="app-tagline">HEIC/HEIF を JPG、PNG、WebP に変換します。画像をアップロードせず、この端末のブラウザ内だけで処理します。</p>
       </header>
 
       <section className="workspace" aria-busy={isConverting}>
@@ -275,7 +275,7 @@ function HomePage({ onNavigate }: { onNavigate: (path: SitePath) => void }) {
             />
             <span className="drop-kicker">ここに追加</span>
             <span className="drop-title">HEIC / HEIF ファイルを置く</span>
-            <span className="drop-subtitle">複数ファイル対応。変換後は ZIP でまとめて保存できます。</span>
+            <span className="drop-subtitle">画像をサーバへ送信しません。複数ファイル対応で、変換後は ZIP でまとめて保存できます。</span>
           </label>
 
           {validationErrors.length > 0 && (
@@ -393,7 +393,7 @@ function HomePage({ onNavigate }: { onNavigate: (path: SitePath) => void }) {
 
           <section className="control-group guide-panel">
             <h2>ガイド</h2>
-            <p className="guide-copy">使い方やHEICの基本を短くまとめています。</p>
+            <p className="guide-copy">HEICの基本、iPhone写真の変換、Windowsで開けないときの対処をまとめています。</p>
             <div className="guide-links">
               {HOME_PAGE.links.map((link) => (
                 <LinkButton key={link.path} label={link.label} path={link.path} onNavigate={onNavigate} />

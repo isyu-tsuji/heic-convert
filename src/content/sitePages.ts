@@ -40,8 +40,8 @@ export const ARTICLE_PAGES: ArticlePage[] = [
   {
     path: '/guide/windows',
     title: 'WindowsでHEICが開けないときの対処',
-    description: 'WindowsでHEICが開けないときの確認点と、変換サイトの使いどころをまとめます。',
-    lead: 'Windows側の設定やアプリの相性でHEICが開けないことがあります。まずは開けない理由を切り分けて、必要ならJPGに変換します。',
+    description: 'WindowsでHEICが開けないときの確認点と、HEICをJPGに変換する使いどころをまとめます。',
+    lead: 'WindowsでHEIC写真が開けないことがあります。まずは開けない理由を切り分けて、必要ならJPGに変換します。',
     sections: [
       {
         heading: 'よくある状況',
@@ -75,9 +75,9 @@ export const ARTICLE_PAGES: ArticlePage[] = [
   },
   {
     path: '/guide/iphone',
-    title: 'iPhoneでHEICを避けたいときの設定',
-    description: 'iPhoneでHEICを避ける設定と、普段の運用で気をつける点を整理します。',
-    lead: 'iPhoneは標準でHEIC保存が有効になっていることが多いです。今後の撮影をJPG寄りにしたいなら、設定を見直します。',
+    title: 'iPhoneのHEIC写真をJPGに変換する方法',
+    description: 'iPhone写真のHEICをJPG、PNG、WebPへ変換したいときの設定と手順を整理します。',
+    lead: 'iPhone写真がHEICで保存されることがあります。撮影後にJPGへ変換したいなら、設定と運用を見直します。',
     sections: [
       {
         heading: '設定の考え方',
@@ -110,7 +110,7 @@ export const ARTICLE_PAGES: ArticlePage[] = [
   {
     path: '/about/heic',
     title: 'HEICとは何か',
-    description: 'HEIC/HEIFの基本と、JPG/PNG/WebPとの違いをざっくり整理します。',
+    description: 'HEIC/HEIFの基本と、JPG/PNG/WebPとの違い、変換が必要になる理由をざっくり整理します。',
     lead: 'HEICは高効率な画像形式です。容量を抑えやすい一方で、対応ソフトや端末の差が出やすいので、共有時には注意が要ります。',
     sections: [
       {
@@ -144,8 +144,8 @@ export const ARTICLE_PAGES: ArticlePage[] = [
   },
   {
     path: '/faq',
-    title: 'よくある質問',
-    description: 'heic-flipの使い方、対応形式、プライバシー面を短くまとめます。',
+    title: 'HEIC変換のよくある質問',
+    description: 'HEIC変換の使い方、対応形式、サーバ送信なしの方針を短くまとめます。',
     lead: '迷いやすい点だけを先にまとめたFAQです。細かい仕様は変換画面と各ガイドからたどれます。',
     sections: [
       {
