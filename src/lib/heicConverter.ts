@@ -1,4 +1,4 @@
-import libheifRuntime, { type LibHeif } from 'libheif-js/wasm-bundle';
+import type { LibHeif } from 'libheif-js/wasm-bundle';
 import { getOutputFormatConfig } from './outputFormat';
 import { asConvertedBlob, type ConvertedBlob, type OutputFormat } from './types';
 
@@ -26,7 +26,7 @@ export async function decodeHeicToImageData(
   arrayBuffer: ArrayBuffer,
   dependencies: DecodeDependencies = {},
 ): Promise<ImageData> {
-  const runtime = dependencies.libheif ?? libheifRuntime;
+  const runtime = dependencies.libheif ?? (await loadLibHeifRuntime());
   const createImageData = dependencies.createImageData ?? createBrowserImageData;
   const decoder = new runtime.HeifDecoder();
   const images = decoder.decode(new Uint8Array(arrayBuffer));
@@ -117,4 +117,9 @@ function createBrowserCanvas(width: number, height: number): HTMLCanvasElement {
   canvas.height = height;
 
   return canvas;
+}
+
+async function loadLibHeifRuntime(): Promise<LibHeif> {
+  const module = await import('libheif-js/wasm-bundle');
+  return module.default;
 }
