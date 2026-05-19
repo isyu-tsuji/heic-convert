@@ -519,7 +519,7 @@ function resolvePath(pathname: string): SitePath {
 
 function updateMetadata(pathname: SitePath) {
   const article = pathname === '/' ? undefined : getArticlePage(pathname);
-  const title = article ? `${article.title} | heic-flip` : 'heic-flip | HEICをJPG・PNG・WebPへブラウザ内で変換';
+  const title = article ? `${article.title} | heic-flip` : 'HEIC JPG 変換｜画像をアップロードしない無料ツール';
   const description = article?.description ?? HOME_PAGE.description;
   const url = new URL(pathname, getSiteBaseUrl()).href;
 

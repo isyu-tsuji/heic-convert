@@ -27,7 +27,7 @@ export interface HomePageSummary {
 
 export const HOME_PAGE: HomePageSummary = {
   title: 'heic-flip',
-  description: 'HEIC/HEIFをJPG、PNG、WebPへ変換するブラウザ完結のサイトです。',
+  description: 'HEIC/HEIFをJPG、PNG、WebPへ変換する、画像をアップロードしないブラウザ完結の無料ツールです。',
   links: [
     { label: 'Windowsで開けない', path: '/guide/windows' },
     { label: 'iPhoneの設定', path: '/guide/iphone' },
