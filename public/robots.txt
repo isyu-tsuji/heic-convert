@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://heicflip.example/sitemap.xml
+Sitemap: https://heic-convert.pages.dev/sitemap.xml

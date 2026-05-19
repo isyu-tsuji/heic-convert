@@ -546,7 +546,7 @@ function getSiteBaseUrl(): string {
     return window.location.origin;
   }
 
-  return 'https://heicflip.example';
+  return 'https://heic-convert.pages.dev';
 }
 
 function setMetaTag(attrName: 'name' | 'property', key: string, value: string) {
