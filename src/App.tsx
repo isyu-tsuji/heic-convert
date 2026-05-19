@@ -1,5 +1,14 @@
-import { type ChangeEvent, type DragEvent, useEffect, useMemo, useRef, useState } from 'react';
+import {
+  type ChangeEvent,
+  type DragEvent,
+  type MouseEvent,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import './App.css';
+import { HOME_PAGE, getArticlePage, isSitePath, type SitePath } from './content/sitePages';
 import { buildOutputFileName } from './lib/fileName';
 import { convertHeicArrayBuffer } from './lib/heicConverter';
 import { OUTPUT_FORMAT_OPTIONS } from './lib/outputFormat';
@@ -14,7 +23,45 @@ const STATUS_LABELS: Record<ConversionJob['status'], string> = {
   failed: '失敗',
 };
 
+const BASE_URL = 'https://heicflip.example';
+
 export default function App() {
+  const [pathname, setPathname] = useState<SitePath>(() => resolvePath(window.location.pathname));
+
+  useEffect(() => {
+    const onPopState = () => setPathname(resolvePath(window.location.pathname));
+    window.addEventListener('popstate', onPopState);
+
+    return () => window.removeEventListener('popstate', onPopState);
+  }, []);
+
+  useEffect(() => {
+    updateMetadata(pathname);
+  }, [pathname]);
+
+  function navigate(path: SitePath) {
+    if (path === pathname) {
+      return;
+    }
+
+    window.history.pushState({}, '', path);
+    setPathname(path);
+  }
+
+  if (pathname !== '/') {
+    const article = getArticlePage(pathname);
+
+    if (!article) {
+      return <NotFoundPage onNavigate={navigate} />;
+    }
+
+    return <ArticlePageView articlePath={pathname} onNavigate={navigate} />;
+  }
+
+  return <HomePage onNavigate={navigate} />;
+}
+
+function HomePage({ onNavigate }: { onNavigate: (path: SitePath) => void }) {
   const [jobs, setJobs] = useState<ConversionJob[]>([]);
   const [outputFormat, setOutputFormat] = useState<OutputFormat>('jpg');
   const [validationErrors, setValidationErrors] = useState<FileValidationError[]>([]);
@@ -219,7 +266,7 @@ export default function App() {
             onDragOver={handleDragOver}
             onDragLeave={handleDragLeave}
             onDrop={handleDrop}
-            >
+          >
             <input
               ref={inputRef}
               className="file-input"
@@ -345,10 +392,174 @@ export default function App() {
               </button>
             )}
           </div>
+
+          <section className="control-group guide-panel">
+            <h2>ガイド</h2>
+            <p className="guide-copy">使い方やHEICの基本を短くまとめています。</p>
+            <div className="guide-links">
+              {HOME_PAGE.links.map((link) => (
+                <LinkButton key={link.path} label={link.label} path={link.path} onNavigate={onNavigate} />
+              ))}
+            </div>
+          </section>
         </aside>
       </section>
     </main>
   );
+}
+
+function ArticlePageView({
+  articlePath,
+  onNavigate,
+}: {
+  articlePath: Exclude<SitePath, '/'>;
+  onNavigate: (path: SitePath) => void;
+}) {
+  const article = getArticlePage(articlePath);
+
+  if (!article) {
+    return <NotFoundPage onNavigate={onNavigate} />;
+  }
+
+  return (
+    <main className="app-shell article-shell">
+      <header className="app-header article-header">
+        <div className="brand-block">
+          <p className="eyebrow">解説</p>
+          <h1>{article.title}</h1>
+        </div>
+        <p className="app-tagline">{article.description}</p>
+      </header>
+
+      <section className="article-layout">
+        <article className="article-card">
+          <p className="article-lead">{article.lead}</p>
+
+          {article.sections.map((section) => (
+            <section className="article-section" key={section.heading}>
+              <h2>{section.heading}</h2>
+              {section.body.map((paragraph) => (
+                <p key={paragraph}>{paragraph}</p>
+              ))}
+            </section>
+          ))}
+        </article>
+
+        <aside className="side-panel article-side-panel">
+          <section className="control-group">
+            <h2>関連ページ</h2>
+            <div className="guide-links">
+              {article.links.map((link) => (
+                <LinkButton key={link.path} label={link.label} path={link.path} onNavigate={onNavigate} />
+              ))}
+            </div>
+          </section>
+
+          <section className="control-group">
+            <h2>元の画面</h2>
+            <p className="guide-copy">変換ツールに戻って、実際にファイルを処理できます。</p>
+            <LinkButton label="変換ツールへ戻る" path="/" onNavigate={onNavigate} />
+          </section>
+        </aside>
+      </section>
+    </main>
+  );
+}
+
+function NotFoundPage({ onNavigate }: { onNavigate: (path: SitePath) => void }) {
+  return (
+    <main className="app-shell article-shell">
+      <header className="app-header article-header">
+        <div className="brand-block">
+          <p className="eyebrow">404</p>
+          <h1>ページが見つかりません</h1>
+        </div>
+        <p className="app-tagline">指定されたページはまだありません。変換ツールのトップに戻れます。</p>
+      </header>
+
+      <section className="article-layout">
+        <article className="article-card">
+          <p className="article-lead">このURLには対応するページがありません。</p>
+        </article>
+
+        <aside className="side-panel article-side-panel">
+          <LinkButton label="変換ツールへ戻る" path="/" onNavigate={onNavigate} />
+        </aside>
+      </section>
+    </main>
+  );
+}
+
+function LinkButton({
+  path,
+  label,
+  onNavigate,
+}: {
+  path: SitePath;
+  label: string;
+  onNavigate: (path: SitePath) => void;
+}) {
+  function handleClick(event: MouseEvent<HTMLAnchorElement>) {
+    event.preventDefault();
+    onNavigate(path);
+  }
+
+  return (
+    <a className="link-button" href={path} onClick={handleClick}>
+      {label}
+    </a>
+  );
+}
+
+function resolvePath(pathname: string): SitePath {
+  if (isSitePath(pathname)) {
+    return pathname;
+  }
+
+  return '/';
+}
+
+function updateMetadata(pathname: SitePath) {
+  const article = pathname === '/' ? undefined : getArticlePage(pathname);
+  const title = article ? `${article.title} | heic-flip` : 'heic-flip | HEICをJPG・PNG・WebPへブラウザ内で変換';
+  const description = article?.description ?? HOME_PAGE.description;
+  const url = new URL(pathname, BASE_URL).href;
+
+  document.title = title;
+
+  setMetaTag('name', 'description', description);
+  setMetaTag('name', 'theme-color', '#fbfaf7');
+  setMetaTag('property', 'og:title', title);
+  setMetaTag('property', 'og:description', description);
+  setMetaTag('property', 'og:url', url);
+  setMetaTag('property', 'twitter:title', title);
+  setMetaTag('property', 'twitter:description', description);
+  setLinkHref('canonical', url);
+}
+
+function setMetaTag(attrName: 'name' | 'property', key: string, value: string) {
+  const selector = `meta[${attrName}="${key}"]`;
+  let element = document.querySelector<HTMLMetaElement>(selector);
+
+  if (!element) {
+    element = document.createElement('meta');
+    element.setAttribute(attrName, key);
+    document.head.appendChild(element);
+  }
+
+  element.setAttribute('content', value);
+}
+
+function setLinkHref(rel: string, href: string) {
+  let element = document.querySelector<HTMLLinkElement>(`link[rel="${rel}"]`);
+
+  if (!element) {
+    element = document.createElement('link');
+    element.rel = rel;
+    document.head.appendChild(element);
+  }
+
+  element.href = href;
 }
 
 function createJobId(): string {
