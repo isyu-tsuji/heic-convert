@@ -251,10 +251,12 @@ function HomePage({ onNavigate }: { onNavigate: (path: SitePath) => void }) {
     <main className="app-shell">
       <header className="app-header">
         <div className="brand-block">
-          <p className="eyebrow">ブラウザで変換</p>
-          <h1>heic-flip</h1>
+          <p className="eyebrow">heic-flip</p>
+          <h1>HEIC JPG 変換</h1>
         </div>
-        <p className="app-tagline">HEIC/HEIF を JPG、PNG、WebP に変換します。画像をアップロードせず、この端末のブラウザ内だけで処理します。</p>
+        <p className="app-tagline">
+          iPhoneの写真がWindowsで開けないときに、HEIC/HEIFをJPG、PNG、WebPへ変換します。画像をアップロードせず、この端末のブラウザ内だけで処理します。
+        </p>
       </header>
 
       <section className="workspace" aria-busy={isConverting}>
@@ -274,8 +276,10 @@ function HomePage({ onNavigate }: { onNavigate: (path: SitePath) => void }) {
               onChange={handleFileChange}
             />
             <span className="drop-kicker">ここに追加</span>
-            <span className="drop-title">HEIC / HEIF ファイルを置く</span>
-            <span className="drop-subtitle">画像をサーバへ送信しません。複数ファイル対応で、変換後は ZIP でまとめて保存できます。</span>
+            <span className="drop-title">iPhone写真・HEICファイルを置く</span>
+            <span className="drop-subtitle">
+              Windowsで開けない写真をJPGへ一括変換できます。画像をサーバへ送信せず、変換後はZIPでまとめて保存できます。
+            </span>
           </label>
 
           {validationErrors.length > 0 && (
@@ -393,7 +397,7 @@ function HomePage({ onNavigate }: { onNavigate: (path: SitePath) => void }) {
 
           <section className="control-group guide-panel">
             <h2>ガイド</h2>
-            <p className="guide-copy">HEICの基本、iPhone写真の変換、Windowsで開けないときの対処をまとめています。</p>
+            <p className="guide-copy">iPhone写真がWindowsで開けない原因、JPG保存の設定、HEICとJPGの違いをまとめています。</p>
             <div className="guide-links">
               {HOME_PAGE.links.map((link) => (
                 <LinkButton key={link.path} label={link.label} path={link.path} onNavigate={onNavigate} />
@@ -519,7 +523,7 @@ function resolvePath(pathname: string): SitePath {
 
 function updateMetadata(pathname: SitePath) {
   const article = pathname === '/' ? undefined : getArticlePage(pathname);
-  const title = article ? `${article.title} | heic-flip` : 'HEIC JPG 変換｜画像をアップロードしない無料ツール';
+  const title = article ? `${article.title} | heic-flip` : 'HEIC JPG 変換｜iPhone写真をアップロードせず無料変換';
   const description = article?.description ?? HOME_PAGE.description;
   const url = new URL(pathname, getSiteBaseUrl()).href;
 
@@ -530,8 +534,8 @@ function updateMetadata(pathname: SitePath) {
   setMetaTag('property', 'og:title', title);
   setMetaTag('property', 'og:description', description);
   setMetaTag('property', 'og:url', url);
-  setMetaTag('property', 'twitter:title', title);
-  setMetaTag('property', 'twitter:description', description);
+  setMetaTag('name', 'twitter:title', title);
+  setMetaTag('name', 'twitter:description', description);
   setLinkHref('canonical', url);
 }
 
